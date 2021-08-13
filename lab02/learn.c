@@ -16,6 +16,10 @@ This returns the addr value back to be stored in the pointer
 The pointer needs to understand what is the type of value that is stored in the pointer
 So the typecast
 
+Think of pointers in this way as well
+When you do node *n;
+Now a variable is declared called *n. It has some memory address where it lives. But the value of this variable is not defined, something that is called to be uninitialized. When you do a malloc and give it the address, it starts to get a value and becomes someting called as non-NULL and starts to point to an address.
+
 Concept
 void function(node *n) {
 
