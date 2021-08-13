@@ -83,7 +83,7 @@ int main() {
 	is_correct = is_correct && list_size(smallList) == 1 && (*smallList)->val == 80 && (*smallList)->next == NULL;
 	printf("Appending a node with val 80 to the empty list. Size of list is %u and it should be 1, the head's "
 		    "val and next attributes are %i and %p and they should be 80 and NULL\n", list_size(smallList), 
-		    (*smallList)->val, (*smallList)->next);
+		    (*smallList)->val, (*smallList));
 
 	reverse_list(smallList);
 	is_correct = is_correct && list_size(smallList) == 1 && (*smallList)->val == 80 && (*smallList)->next == NULL;
