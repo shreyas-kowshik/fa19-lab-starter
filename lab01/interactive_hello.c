@@ -1,5 +1,6 @@
 #include <stdio.h>
 
+// `run < inp.txt`
 #define MAX_LEN 80
 
 int main(int argc, char *argv[]) {
