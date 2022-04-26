@@ -25,14 +25,14 @@ main:
     la t1, source
     la t2, dest
 loop:
-    slli t3, t0, 2
+    slli t3, t0, 2 # multiply by four to account for word size of elements
     add t4, t1, t3
     lw t5, 0(t4)
     beq t5, x0, exit
     add t6, t2, t3
     sw t5, 0(t6)
     addi t0, t0, 1
-    jal x0, loop
+    jal x0, loop # Try to write address of next instruction following jal to x0, but it will be ignored anyways
 exit:
     addi a0, x0, 10
     add a1, x0, x0
