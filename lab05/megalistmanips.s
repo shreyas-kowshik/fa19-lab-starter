@@ -13,7 +13,10 @@ end_msg:    .asciiz "Lists after: \n"
 .text
 main:
     jal create_default_list
+    # jal ra, create_default_list
     mv s0, a0   # v0 = s0 is head of node list
+    # mv a0, s0 # Correction
+
 
     #print "lists before: "
     la a1, start_msg
@@ -46,6 +49,8 @@ main:
     ecall
 
 map:
+    # a0 : address of current list node
+    # a1 : address of function
     addi sp, sp, -12
     sw ra, 0(sp)
     sw s1, 4(sp)
@@ -62,20 +67,28 @@ map:
     # - 4 for the size of the array
     # - 4 more for the pointer to the next node
 mapLoop:
-    add t1, s0, x0      # load the address of the array of current node into t1
+    # s0 : address of current list node
+    # s1 : address of function
+    # M : add t1, s0, x0      # load the address of the array of current node into t1
+    lw t1, 0(s0)
     lw t2, 4(s0)        # load the size of the node's array into t2
 
-    add t1, t1, t0      # offset the array address by the count
-    lw a0, 0(t1)        # load the value at that address into a0
+    # M : add t1, t1, t0      # offset the array address by the count
+    slli t3, t0, 2
+    add t4, t1, t3
+    # M : lw a0, 0(t1)        # load the value at that address into a0
+    lw a0, 0(t4)
 
-    jalr s1             # call the function on that value.
-
-    sw a0, 0(t1)        # store the returned value back into the array
+    # M : t1 is changed so save/restore it
+    jalr s1             # call the function on that value
+    
+    sw a0, 0(t4)        # store the returned value back into the array; added t4 instead of t1
     addi t0, t0, 1      # increment the count
     bne t0, t2, mapLoop # repeat if we haven't reached the array size yet
 
-    la a0, 8(s0)        # load the address of the next node into a0
-    lw a1, 0(s1)        # put the address of the function back into a1 to prepare for the recursion
+    lw a0, 8(s0)        # load the address of the next node into a0
+    # M : lw a1, 0(s1)        # put the address of the function back into a1 to prepare for the recursion
+    add a1, s1, x0
 
     jal  map            # recurse
 done:
@@ -90,7 +103,7 @@ mystery:
     add a0, t1, a0
     jr ra
 
-create_default_list:
+create_default_list: # Finally a0 must contain head of the list address
     addi sp, sp, -4
     sw ra, 0(sp)
     li s0, 0  # pointer to the last node we handled
@@ -98,11 +111,11 @@ create_default_list:
     li s2, 5  # size
     la s3, arrays
 loop: #do...
-    li a0, 12
+    li a0, 12 # Number of bytes to allocate
     jal malloc      # get memory for the next node
-    mv s4, a0
+    mv s4, a0 # Address of location that is malloc'd
     li a0, 20
-    jal  malloc     # get memory for this array
+    jal  malloc     # get memory for this array; total 20 bytes
 
     sw a0, 0(s4)    # node->arr = malloc
     lw a0, 0(s4)
